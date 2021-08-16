@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:movieapp/EditMovie.dart';
+import 'package:movieapp/EditMovieItem.dart';
 import 'package:movieapp/Login.dart';
 import 'package:movieapp/Movie.dart';
 import 'package:movieapp/providers/database_helper.dart';
@@ -82,15 +83,15 @@ class _HomeState extends State<Home> {
 
   void queryData() async {
     List<Map<String,dynamic>> queryRows = await DatabaseHelper.instance.queryAll();
+    print("Start");
     moviesTemp = [];
+    print(queryRows[0]['ReleaseDate']);
     for(int i = 0;i < queryRows.length;i++){
       if(queryRows[i] != null){
         MovieItem item = MovieItem(queryRows[i]['_id'],queryRows[i]['Image'], queryRows[i]['Name'], queryRows[i]['Rating'], queryRows[i]['ReleaseDate'], queryRows[i]['Description']);
-        if(!moviesTemp.contains(item)){
-          setState(() {
-            moviesTemp.add(MovieItem(queryRows[i]['_id'],queryRows[i]['Image'], queryRows[i]['Name'], queryRows[i]['Rating'], queryRows[i]['ReleaseDate'], queryRows[i]['Description']));
+        setState(() {
+            moviesTemp.add(item);
           });
-        }
       }
     }
   }
@@ -191,12 +192,18 @@ class _HomeState extends State<Home> {
                                             color: Colors.black,
                                             fontSize: 16.0
                                         ),),
-                                        IconButton(icon: Icon(Icons.delete,size: 17,color: Color.fromRGBO(223,27,71, 0.8),), onPressed: () async {
-                                          setState(() {
-                                            print(moviesTemp[index].id);
-                                            delete(moviesTemp[index].id);
-                                            moviesTemp.removeAt(index);
-                                          });
+                                        Container(
+                                          width: 30,
+                                          child: IconButton(icon: Icon(Icons.delete,size: 22,color: Color.fromRGBO(223,27,71, 0.8),), onPressed: () async {
+                                            setState(() {
+                                              print(moviesTemp[index].id);
+                                              delete(moviesTemp[index].id);
+                                              moviesTemp.removeAt(index);
+                                            });
+                                          }),
+                                        ),
+                                        IconButton(icon: Icon(Icons.edit,size: 22,color: Color.fromRGBO(223,27,71, 0.8),), onPressed: () async {
+                                          Navigator.push(context, MaterialPageRoute(builder: (context) => EditMovieItem(moviesTemp[index])));
                                         })
                                       ],
                                     ),

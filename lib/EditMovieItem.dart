@@ -19,6 +19,7 @@ class _EditMovieItemState extends State<EditMovieItem> {
   int rating = 3;
   String description = '';
   String _base64;
+  String image;
   File imageFile;
   final ImagePicker _picker = ImagePicker();
   Future getImage() async {
@@ -35,7 +36,7 @@ class _EditMovieItemState extends State<EditMovieItem> {
     releaseDate = widget.item.releaseDate;
     rating = widget.item.rating;
     description = widget.item.description;
-
+    image = widget.item.image;
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -73,6 +74,7 @@ class _EditMovieItemState extends State<EditMovieItem> {
                       Container(
                         padding: EdgeInsets.only(top:10,left: 15,right: 15),
                         child: TextFormField(
+                          initialValue: name,
                           onChanged: (val){
                             setState(() {
                               name = val;
@@ -107,9 +109,11 @@ class _EditMovieItemState extends State<EditMovieItem> {
                       Container(
                         padding: EdgeInsets.only(left: 15,right: 15),
                         child: TextFormField(
+                          initialValue: releaseDate,
                           onChanged: (val){
                             setState(() {
                               releaseDate = val;
+                              print(releaseDate);
                             });
                           },
                           decoration: InputDecoration(
@@ -137,6 +141,7 @@ class _EditMovieItemState extends State<EditMovieItem> {
                           keyboardType: TextInputType.multiline,
                           minLines: 3,
                           maxLines: 10,
+                          initialValue: description,
                           onChanged: (val){
                             setState(() {
                               description = val;
@@ -173,7 +178,7 @@ class _EditMovieItemState extends State<EditMovieItem> {
                       Padding(
                         padding: const EdgeInsets.only(left: 8.0),
                         child: RatingBar.builder(
-                          initialRating: 3,
+                          initialRating: rating.toDouble(),
                           minRating: 1,
                           direction: Axis.horizontal,
                           allowHalfRating: true,
@@ -208,16 +213,10 @@ class _EditMovieItemState extends State<EditMovieItem> {
                         },
                         child: Container(
                           child: Center(
-                            child: imageFile == null ? Container(
-                              child: Center(child: Text('Select Image',style: TextStyle(
-                                  fontFamily: 'Montserrat',
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.black45,
-                                  fontSize: 17.0
-                              ),)),
-                            ) : Container(height:300,child: Image.file(imageFile)),
-                          ),
-                        ),
+                            child:
+                            Container(height:300,child: Image.memory(base64Decode(image))),
+                          )
+                        )
                       ),
                       SizedBox(height: 30,),
                       Center(
@@ -226,18 +225,19 @@ class _EditMovieItemState extends State<EditMovieItem> {
                           child: RaisedButton(
                             onPressed: () async {
                               print(name);
-                              final bytes = File(imageFile.path).readAsBytesSync();
-                              _base64 = base64Encode(bytes);
-                              int i = await DatabaseHelper.instance.insert({
-                                DatabaseHelper.image : _base64,
+                              print(releaseDate);
+                              int i = await DatabaseHelper.instance.update({
+                                DatabaseHelper.columnId: widget.item.id,
+                                DatabaseHelper.image : image,
                                 DatabaseHelper.name : name,
                                 DatabaseHelper.rating: rating,
                                 DatabaseHelper.releaseDate : releaseDate,
                                 DatabaseHelper.description : description
                               });
-                              print('The inserted id is $i');
+                              print('The edited id is $i');
                               // await DatabaseHelper.instance.delete(2);
                               List<Map<String,dynamic>> queryRows = await DatabaseHelper.instance.queryAll();
+                              print(queryRows[1]['ReleaseDate']);
                               Navigator.push(context, MaterialPageRoute(builder: (context) => Home()));
                             },
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),

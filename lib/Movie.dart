@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:movieapp/EditMovie.dart';
+import 'package:movieapp/EditMovieItem.dart';
 import 'package:movieapp/Home.dart';
 class Movie extends StatefulWidget {
   final MovieItem item;
@@ -30,15 +31,18 @@ class _MovieState extends State<Movie> {
                       SizedBox.expand(
                         child: Container(
                           height: size.height * 0.5 - 50,
+                          width: size.width - 50,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.only(bottomLeft: Radius.circular(20)),
+                          ),
                           child: FittedBox(
                             child: Image.memory(base64Decode(widget.item.image)),
                             fit: BoxFit.cover,
                           ),
                         ),
                       ),
-
                       Positioned(
-                        bottom: 0,
+                        bottom: 10,
                         right: 0,
                         child: Container(
                         width: size.width * 0.6,
@@ -46,7 +50,7 @@ class _MovieState extends State<Movie> {
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.only(
-                              bottomLeft: Radius.circular(30),
+                              bottomLeft: Radius.circular(50),
                               topLeft: Radius.circular(50),
                             ),
                             boxShadow: [BoxShadow(offset: Offset(0,5),blurRadius: 50,color: Color(0xFF12153D).withOpacity(0.2),)],
@@ -93,7 +97,7 @@ class _MovieState extends State<Movie> {
                               borderRadius: BorderRadius.circular(10)
                           ),
                           child: IconButton(color:Colors.white,iconSize: 30,onPressed: (){
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => EditMovie()));
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => EditMovieItem(widget.item)));
                           }, icon: Icon(Icons.add))),
                     ],
                   ),
@@ -134,12 +138,19 @@ class _MovieState extends State<Movie> {
                         child: Container(
                           constraints: BoxConstraints(maxWidth: 280.0, minHeight: 50.0),
                           alignment: Alignment.center,
-                          child: Text(
-                            "Watch Movie",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                color: Colors.white
-                            ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.play_circle_outline,color: Colors.white,size: 22,),
+                              SizedBox(width: 5,),
+                              Text(
+                                "Watch Movie",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    color: Colors.white
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
